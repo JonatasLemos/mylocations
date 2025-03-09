@@ -1,13 +1,10 @@
 import datetime
 
+from models.base import Base
 from sqlalchemy import Column, DateTime, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
 
 
-LocationTypeBase = declarative_base()
-
-
-class LocationType(LocationTypeBase):
+class LocationType(Base):
     """LocationType ORM model"""
 
     __tablename__ = "location_type"

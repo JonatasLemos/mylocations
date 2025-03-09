@@ -1,13 +1,10 @@
 import datetime
 
+from models.base import Base
 from sqlalchemy import Column, DateTime, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
 
 
-UserBase = declarative_base()
-
-
-class User(UserBase):
+class User(Base):
     """User ORM model"""
 
     __tablename__ = "user"
