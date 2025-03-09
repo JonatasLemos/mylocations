@@ -6,6 +6,7 @@ from models.base import Base
 from models.location_type import LocationType
 from models.user import User
 from models.location import Location
+from models.user_location import UserLocation
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config

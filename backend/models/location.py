@@ -1,11 +1,11 @@
 import datetime
 
 from models.base import Base
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, UniqueConstraint
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, Numeric, UniqueConstraint
 
 
 class Location(Base):
-    """Location ORM model"""
+    """Model to store location related data"""
 
     __tablename__ = "location"
     id = Column(
@@ -19,12 +19,23 @@ class Location(Base):
         default=datetime.datetime.utcnow,
         doc="The date and time the location type was created",
     )
-    latitude = Column(Float(precision=16), doc="The latitude of the location")
-    longitude = Column(Float(precision=16), doc="The longitude of the location")
+    latitude = Column(
+        Numeric(precision=8),
+        index=True,
+        nullable=False,
+        doc="The latitude of the location",
+    )
+    longitude = Column(
+        Numeric(precision=8),
+        index=True,
+        nullable=False,
+        doc="The longitude of the location",
+    )
     location_type_id = Column(
         "location_type_id",
         Integer,
         ForeignKey("location_type.id", ondelete="CASCADE"),
+        nullable=False,
         doc="The location type",
     )
     __table_args__ = (
