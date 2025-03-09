@@ -4,13 +4,23 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.query import Query
 
 
-def get_object_by_id(model: declarative_base, path_variable: int, db: sessionmaker):
+def get_object_by_id(
+    model: declarative_base,
+    path_variable: int,
+    db: sessionmaker,
+    status_code: int = 404,
+    msg: str = "Object not found",
+):
     """Get a single object from a model by its ID
 
     Args:
         model (declarative_base): The model to fetch the object
         path_variable (int): The path_variable with the id
         db (sessionmaker): The database session
+        status_code (int, optional): The status code to return if
+        the object is not found. Defaults to 404.
+        msg: The message to return if the object is not found.
+        Defaults to "Object not found".
 
     Raises:
         HTTPException: If an object with the provided ID is not found
@@ -20,7 +30,7 @@ def get_object_by_id(model: declarative_base, path_variable: int, db: sessionmak
     """
     instance = db.query(model).filter(model.id == path_variable).first()
     if instance is None:
-        raise HTTPException(status_code=404, detail="Object not found")
+        raise HTTPException(status_code=status_code, detail=msg)
     return instance
 
 

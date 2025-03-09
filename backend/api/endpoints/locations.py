@@ -1,13 +1,16 @@
 from typing import Optional
 
+from api.services.location_service import CreateLocation
 from api.utils.helpers import get_object_by_id, order_objects
 from api.utils.security import validate_token
 from core.database import get_db as db
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, status
 from fastapi_pagination import Page
 from fastapi_pagination.ext.sqlalchemy import paginate
 from models.location import Location
-from schemas.location_schema import LocationOut
+from models.location_type import LocationType
+from models.user import User
+from schemas.location_schema import LocationCreate, LocationOut
 from sqlalchemy.orm import Session
 
 
@@ -34,7 +37,7 @@ def list_locations(
     return paginate(db, query)
 
 
-@router.get("/location_id/")
+@router.get("/{location_id}/")
 def detail_location(
     location_id: int,
     db: Session = Depends(db),
@@ -42,3 +45,21 @@ def detail_location(
 ) -> LocationOut:
     location = get_object_by_id(Location, location_id, db)
     return location
+
+
+@router.post("/location/", status_code=status.HTTP_201_CREATED)
+def create_location(
+    data: LocationCreate,
+    db: Session = Depends(db),
+    user: User = Depends(validate_token),
+):
+    get_object_by_id(
+        LocationType,
+        data.location_type_id,
+        db,
+        status_code=400,
+        msg="Invalid location_type_id: Location type not found",
+    )
+    CreateLocation(db, data, user)
+
+    return {"detail": "Location created successfully"}

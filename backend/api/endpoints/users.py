@@ -26,7 +26,8 @@ def login(username: str, password: str, db: Session = Depends(db)):
     user = db.query(User).filter(User.username == username).first()
     if not user or not verify_password(password, user.password):
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials",
         )
     access_token = create_access_token(data={"sub": user.username})
     return {"access_token": access_token, "token_type": "bearer"}

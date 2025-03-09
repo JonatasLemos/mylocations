@@ -1,10 +1,13 @@
 from datetime import datetime, timedelta
 
 from api import ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, SECRET_KEY
-from fastapi import HTTPException, Security, status
+from core.database import get_db as db
+from fastapi import Depends, HTTPException, Security, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
+from models.user import User
 from passlib.context import CryptContext
+from sqlalchemy.orm import Session
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -53,19 +56,35 @@ def create_access_token(data: dict) -> str:
 security = HTTPBearer()
 
 
-def validate_token(credentials: HTTPAuthorizationCredentials = Security(security)):
+def validate_token(
+    credentials: HTTPAuthorizationCredentials = Security(security),
+    db: Session = Depends(db),
+):
     """Validate if provided token is correct
 
     Args:
         credentials (HTTPAuthorizationCredentials, optional): _description_.
         Defaults to Security(security).
-
+        db: The db session. Defaults to Depends(db).
     Raises:
         HTTPException: Raises 401 if token is invalid
     """
     token = credentials.credentials
     try:
-        jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if not username:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token: missing subject",
+            )
+        user = db.query(User).filter(User.username == username).first()
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User not found",
+            )
+        return user
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
