@@ -1,3 +1,5 @@
+import math
+
 from fastapi import HTTPException
 from sqlalchemy import literal_column
 from sqlalchemy.ext.declarative import declarative_base
@@ -82,3 +84,32 @@ def order_objects_with_literals(
     if order_param.lower() == "desc":
         return query.order_by(literal_column(order_by_column).desc())
     return query.order_by(literal_column(order_by_column))
+
+
+class CustomPaginator:
+    """Paginate query using size and page from query parameters."""
+
+    def __init__(self, query: Query, page: int, size: int):
+        """Initializer method
+
+        Args:
+            query (Query): The query to paginate
+            page (int): The pages to use in offset
+            size (int): The page size
+        """
+        self.query = query
+        self.page = page
+        self.size = size
+        self.pages: int = None
+        self.total: int = None
+
+    def paginate_query(self) -> list:
+        """Paginate query and return the final paginated items.
+
+        Returns:
+            list: The final paginated items
+        """
+        self.total = self.query.count()
+        self.pages = math.ceil(self.total / self.size)
+        offset = (self.page - 1) * self.size
+        return self.query.offset(offset).limit(self.size).all()

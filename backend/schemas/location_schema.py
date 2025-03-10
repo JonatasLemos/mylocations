@@ -1,8 +1,11 @@
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Generic, Optional, TypeVar
 
 from fastapi import HTTPException, status
 from pydantic import BaseModel, field_validator
+
+
+T = TypeVar("T")
 
 
 class LocationOut(BaseModel):
@@ -21,6 +24,17 @@ class LocationTypeOut(BaseModel):
     id: int
     name: str
     created_at: Optional[datetime]
+
+    class Config:
+        from_attributes = True
+
+
+class PaginatedResponse(BaseModel, Generic[T]):
+    items: list[T]
+    total: int
+    page: int
+    size: int
+    pages: int
 
 
 class LocationCreate(BaseModel):

@@ -25,7 +25,7 @@ router = APIRouter(prefix="/locations", tags=["locations"])
 user_location_router = APIRouter(prefix="/user-locations", tags=["locations"])
 
 
-@router.get("")
+@router.get("/list/")
 def list_locations(
     db: Session = Depends(db),
     _: None = Depends(validate_token),
@@ -55,7 +55,7 @@ def detail_location(
     return location
 
 
-@user_location_router.get("")
+@user_location_router.get("/list/")
 def list_user_locations(
     db: Session = Depends(db),
     user: User = Depends(validate_token),
@@ -74,7 +74,7 @@ def list_user_locations(
     return page(user_locations.response)
 
 
-@router.post("/location/", status_code=status.HTTP_201_CREATED)
+@user_location_router.post("/create/", status_code=status.HTTP_201_CREATED)
 def create_location(
     data: LocationCreate,
     db: Session = Depends(db),
