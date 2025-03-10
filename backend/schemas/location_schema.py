@@ -81,6 +81,18 @@ class LocationCreate(BaseModel):
         return value
 
 
+class LocationUpdate(BaseModel):
+    description: Optional[str] = None
+    name: Optional[str] = None
+
+    @field_validator("name", "description")
+    def strip_whitespace(cls, value):
+        """Strip whitespace from string values"""
+        if isinstance(value, str):
+            return value.strip()
+        return value
+
+
 class UserLocationOut(BaseModel):
     """Data schema for user location response"""
 
