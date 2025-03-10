@@ -1,4 +1,5 @@
 from fastapi import HTTPException
+from sqlalchemy import literal_column
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.query import Query
@@ -63,3 +64,21 @@ def order_objects(
     if order_param.lower() == "desc":
         return query.order_by(column.desc())
     return query.order_by(column)
+
+
+def order_objects_with_literals(
+    order_by_column: str, order_param: str, query: Query
+) -> Query:
+    """Order objects when literal_column is needed
+
+    Args:
+        order_by_column (str): The column to order by
+        order_param (str): The order direction
+        query (Query): The model query
+
+    Returns:
+        Query: The ordered query
+    """
+    if order_param.lower() == "desc":
+        return query.order_by(literal_column(order_by_column).desc())
+    return query.order_by(literal_column(order_by_column))

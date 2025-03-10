@@ -6,5 +6,6 @@ from fastapi_pagination import add_pagination
 app = FastAPI()
 add_pagination(app)
 app.include_router(locations.router)
+app.include_router(locations.user_location_router)
 app.include_router(users.router)
 app.include_router(location_types.router)

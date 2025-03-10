@@ -79,3 +79,25 @@ class LocationCreate(BaseModel):
         if isinstance(value, str):
             return value.strip()
         return value
+
+
+class UserLocationOut(BaseModel):
+    """Data schema for user location response"""
+
+    location_id: int
+    location_name: str
+    description: Optional[str] = None
+    latitude: float
+    longitude: float
+    location_type_id: int
+    location_type_name: str
+
+    class Config:
+        field_mappings = {
+            "location_id": "location.id",
+            "location_name": "user_location.name",
+            "latitude": "latitude",
+            "longitude": "longitude",
+            "location_type_id": "location_type.id",
+            "location_type_name": "location_type.name",
+        }

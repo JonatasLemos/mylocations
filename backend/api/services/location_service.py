@@ -1,5 +1,7 @@
+from api.utils.helpers import order_objects_with_literals
 from fastapi import HTTPException, status
 from models.location import Location
+from models.location_type import LocationType
 from models.user_location import UserLocation
 from sqlalchemy.orm import Session
 
@@ -77,3 +79,65 @@ class CreateLocation:
     def commit_changes(self):
         """Commit changes to the database"""
         self.db.commit()
+
+
+class ListUserLocations:
+    def __init__(self, db: Session, user: dict, order_by, order, validation_model):
+        """Class initializer
+
+        Args:
+            db (Session): The database session
+            user (dict): The user instance
+        """
+        self.db = db
+        self.user = user
+        self.order_by = order_by
+        self.order = order
+        self.validation_model = validation_model
+        self.field_mapping = validation_model.Config.field_mappings
+        self.query = None
+        self.response = []
+        self.construct_query()
+
+    def construct_query(self):
+        self.query = (
+            self.db.query(UserLocation, Location, LocationType)
+            .join(Location, UserLocation.location_id == Location.id)
+            .join(LocationType, Location.location_type_id == LocationType.id)
+            .filter(UserLocation.user_id == self.user.id)
+        )
+        self.add_ordering()
+
+    def add_ordering(self):
+        if self.order_by not in self.field_mapping.keys():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Filter: {self.order_by} is not allowed.",
+            )
+        self.query = order_objects_with_literals(
+            self.field_mapping[self.order_by], self.order, self.query
+        )
+        self.check_user_location_exists()
+
+    def check_user_location_exists(self):
+        user_locations = self.query.all()
+        if not user_locations:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"No locations found for the user {self.user.id}",
+            )
+        self.create_response(user_locations)
+
+    def create_response(self, user_locations):
+        for user_location, location, location_type in user_locations:
+            self.response.append(
+                self.validation_model(
+                    location_id=user_location.location_id,
+                    location_name=user_location.name,
+                    description=user_location.description,
+                    latitude=location.latitude,
+                    longitude=location.longitude,
+                    location_type_id=location.location_type_id,
+                    location_type_name=location_type.name,
+                )
+            )
