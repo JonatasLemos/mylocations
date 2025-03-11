@@ -17,6 +17,9 @@ class LocationOut(BaseModel):
     longitude: float
     created_at: Optional[datetime]
 
+    class Config:
+        from_attributes = True
+
 
 class LocationTypeOut(BaseModel):
     """Data schema for location type response"""
@@ -110,6 +113,7 @@ class LocationUpdate(BaseModel):
 class UserLocationOut(BaseModel):
     """Data schema for user location response"""
 
+    user_location_id: int
     location_id: int
     location_name: str
     description: Optional[str] = None
@@ -119,7 +123,9 @@ class UserLocationOut(BaseModel):
     location_type_name: str
 
     class Config:
+        from_attributes = True
         field_mappings = {
+            "user_location_id": "user_location.id",
             "location_id": "location.id",
             "location_name": "user_location.name",
             "latitude": "latitude",
