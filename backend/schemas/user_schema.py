@@ -23,3 +23,7 @@ class UserRegistration(UserBase):
         if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
             raise ValueError("Password must contain at least one special character")
         return password
+
+
+class TokenRefreshRequest(BaseModel):
+    refresh_token: str
