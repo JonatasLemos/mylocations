@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   db:
     image: postgres:14
@@ -10,10 +9,12 @@ services:
       - "5432:5432" 
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - internal_network
 
   backend:
     build: ./backend
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    command: sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
     ports:
       - "8000:8000"
     environment:
@@ -26,16 +27,32 @@ services:
     volumes:
         - ./backend:/app  
         - /app/__pycache__/  
+    networks:
+      - internal_network
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        CHOKIDAR_USEPOLLING: "true"
     ports:
       - "3000:3000"
+      - "35729:35729"
+    volumes:
+      - ./frontend:/app 
+      - /app/build 
+      - /app/node_modules 
     depends_on:
       - backend
     environment:
-      REACT_APP_API_URL: ${REACT_APP_API_URL}
+      REACT_APP_API_URL: "http://backend:8000"
+      CHOKIDAR_USEPOLLING: "true" 
+    networks:
+      - internal_network
 
 volumes:
   postgres_data:
-  
+
+networks:
+  internal_network: 
+    driver: bridge
