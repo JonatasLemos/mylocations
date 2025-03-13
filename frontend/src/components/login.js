@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { registerUser } from '../api/login_api';
+import { registerUser,loginUser } from '../api/login_api';
 
 function RegistrationForm() {
     const [username, setUsername] = useState('');
@@ -9,21 +9,26 @@ function RegistrationForm() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        // Save current state in case we need to restore it
-        const prevUsername = username;
-        const prevPassword = password;
-
         const { success, data } = await registerUser(username, password);
 
         if (success) {
-            setMessage(data.message);
+            setMessage("Registration successful! Logging in...");
+            
+            const loginResponse = await loginUser(username, password);
+
+            if (loginResponse.success) {
+                sessionStorage.setItem('access_token', loginResponse.data.access); // Store token
+                sessionStorage.setItem('refresh_token', loginResponse.data.refresh);
+                alert('Login successful! Token stored.');
+            } else {
+                alert(loginResponse.data.detail || 'Login failed');
+            }
+
             setUsername('');
             setPassword('');
         } else {
             alert(data.detail || 'Registration failed');
             setMessage('');
-            setUsername(prevUsername);
-            setPassword(prevPassword);
         }
     };
 
