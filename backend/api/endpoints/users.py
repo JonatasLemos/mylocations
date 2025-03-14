@@ -5,13 +5,14 @@ from api.utils.security import (
     create_token,
     decode_token,
     hash_password,
+    validate_token,
     verify_password,
 )
 from core.database import get_db as db
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from models.user import User
-from schemas.user_schema import Login, TokenRefreshRequest, UserRegistration
+from schemas.user_schema import Login, TokenRefreshRequest, UserOut, UserRegistration
 from sqlalchemy.orm import Session
 
 
@@ -65,3 +66,10 @@ def refresh_token(data: TokenRefreshRequest):
     new_access_token = create_token(data={"sub": username})
 
     return {"access_token": new_access_token, "token_type": "bearer"}
+
+
+@router.get("/me/")
+def user_detail(db: Session = Depends(db), user=Depends(validate_token)) -> UserOut:
+    """Get user details"""
+
+    return {"username": user.username}

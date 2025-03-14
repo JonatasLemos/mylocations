@@ -27,3 +27,7 @@ class UserRegistration(UserBase):
 
 class TokenRefreshRequest(BaseModel):
     refresh_token: str
+
+
+class UserOut(BaseModel):
+    username: str
