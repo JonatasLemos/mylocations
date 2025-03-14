@@ -14,8 +14,10 @@ class User(Base):
         index=True,
         doc="Unique identifier for the user",
     )
-    username = Column(String, index=True, unique=True, doc="The username")
-    password = Column(String, doc="The user hashed password")
+    username = Column(
+        String, index=True, unique=True, nullable=False, doc="The username"
+    )
+    password = Column(String, nullable=False, doc="The user hashed password")
     created_at = Column(
         DateTime,
         default=datetime.datetime.utcnow,
