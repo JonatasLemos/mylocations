@@ -3,8 +3,11 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import RegistrationForm from './components/register';
 import LocationType from './components/location_types';
 import LoginForm from './components/login';
+import Logout from './components/logout';
 
 function App() {
+  const isLoggedIn = !!sessionStorage.getItem('access_token'); 
+  console.log(isLoggedIn,"hein")
   return (
     <Router>
       <div className="container mt-4">
@@ -14,17 +17,17 @@ function App() {
               <Link to="/registration" className="nav-link">Register</Link>
             </li>
             <li className="nav-item">
-              <Link to="/login" className="nav-link">Login</Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/location_type" className="nav-link">Available locations</Link>
+              <Link to="/location" className="nav-link">Available locations</Link>
             </li>
           </ul>
+          <div  className="mr-auto">
+            <Logout/>
+          </div> 
         </nav>
         <Routes>
           <Route path="/registration" element={<RegistrationForm />} />
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/location_type" element={<LocationType />} />
+          <Route path="/" element={<LoginForm />} />
+          <Route path="/location" element={<LocationType />} />
         </Routes>
       </div>
     </Router>

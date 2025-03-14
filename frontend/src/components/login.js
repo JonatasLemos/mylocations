@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { loginUser, fetchUsername} from '../api/login_api';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 function LoginForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -19,6 +21,7 @@ function LoginForm() {
       if(usernameResponse.success){
         alert(`Login successful! Welcome ${usernameResponse.data.username}`);
         setMessage(`Welcome ${usernameResponse.data.username}`);
+        navigate('/location');
       } else {
         alert(usernameResponse.data.detail || "Failed to fetch username");
         setMessage(usernameResponse.data.detail || "Failed to fetch username");
