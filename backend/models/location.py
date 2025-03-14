@@ -20,13 +20,13 @@ class Location(Base):
         doc="The date and time the location type was created",
     )
     latitude = Column(
-        Numeric(precision=8),
+        Numeric(precision=8, scale=3),
         index=True,
         nullable=False,
         doc="The latitude of the location",
     )
     longitude = Column(
-        Numeric(precision=8),
+        Numeric(precision=8, scale=3),
         index=True,
         nullable=False,
         doc="The longitude of the location",

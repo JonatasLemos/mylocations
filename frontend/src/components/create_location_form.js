@@ -65,7 +65,7 @@ function CreateLocationForm() {
         <form onSubmit={handleSubmit} className="form-group">
           <div className="mb-3">
             <input
-              type="number"
+              type="float"
               placeholder="Latitude"
               onChange={(e) => setLatitude(e.target.value)}
               className="form-control"
@@ -73,7 +73,7 @@ function CreateLocationForm() {
           </div>
           <div className="mb-3">
             <input
-              type="number"
+              type="float"
               placeholder="Longitude"
               onChange={(e) => setLongitude(e.target.value)}
               className="form-control"
