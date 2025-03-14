@@ -40,6 +40,15 @@ class PaginatedResponse(BaseModel, Generic[T]):
     pages: int
 
 
+class LocationCreateOut(BaseModel):
+    id: int
+    name: str
+    location_id: int
+    description: str
+    user_id: int
+    created_at: datetime
+
+
 class LocationCreate(BaseModel):
     """Data schema for location input"""
 

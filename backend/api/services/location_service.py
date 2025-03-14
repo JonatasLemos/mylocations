@@ -1,9 +1,11 @@
+from api.utils.exceptions import NotFoundException
 from api.utils.helpers import CustomPaginator, order_objects_with_literals
 from fastapi import HTTPException, status
 from models.location import Location
 from models.location_type import LocationType
 from models.user_location import UserLocation
 from pydantic import BaseModel
+from schemas.location_schema import LocationCreateOut
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.query import Query
 
@@ -22,6 +24,7 @@ class CreateLocation:
         self.db = db
         self.data = data
         self.user = user
+        self.location = None
         self.get_or_create_location()
 
     def get_or_create_location(self):
@@ -76,11 +79,32 @@ class CreateLocation:
             description=self.data.description,
         )
         self.db.add(user_location)
+        self.location = location
+
         self.commit_changes()
 
     def commit_changes(self):
         """Commit changes to the database"""
         self.db.commit()
+
+    def get_response(self):
+        """Create endpoint ready response with the location created"""
+        last_location = (
+            self.db.query(UserLocation)
+            .filter(
+                UserLocation.user_id == self.user.id,
+                UserLocation.location_id == self.location.id,
+            )
+            .first()
+        )
+        return LocationCreateOut(
+            id=last_location.id,
+            name=last_location.name,
+            location_id=last_location.location_id,
+            description=last_location.description,
+            user_id=last_location.user_id,
+            created_at=last_location.created_at,
+        )
 
 
 class ListUserLocations:
@@ -156,10 +180,7 @@ class ListUserLocations:
     def check_user_location_exists(self):
         """Check if user has location data"""
         if not self.items:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"No locations found for the user {self.user.id}",
-            )
+            raise NotFoundException()
         self.create_response(self.items)
 
     def create_response(self, items):

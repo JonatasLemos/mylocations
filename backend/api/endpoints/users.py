@@ -8,6 +8,12 @@ from api.utils.security import (
     validate_token,
     verify_password,
 )
+from api.utils.swagger_doc import (
+    AUTHENTICATION_TOKEN_200_RESPONSE,
+    FORBIDEN_403,
+    REFRESH_TOKEN_200_RESPONSE,
+    UNAUTHORIZED_401,
+)
 from core.database import get_db as db
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -23,6 +29,7 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 @router.post("/register/", status_code=status.HTTP_201_CREATED)
 def register_user(data: UserRegistration, db: Session = Depends(db)):
+    """Register a new user."""
     if db.query(User).filter(User.username == data.username).first():
         raise HTTPException(status_code=400, detail="Username already taken")
     new_user = User(username=data.username, password=hash_password(data.password))
@@ -31,8 +38,12 @@ def register_user(data: UserRegistration, db: Session = Depends(db)):
     return {"message": "User registered successfully"}
 
 
-@router.post("/auth/token/")
+@router.post(
+    "/auth/token/",
+    responses={200: AUTHENTICATION_TOKEN_200_RESPONSE, 401: UNAUTHORIZED_401},
+)
 def login(data: Login, db: Session = Depends(db)):
+    """Get access token providing username and password"""
     user = db.query(User).filter(User.username == data.username).first()
     if not user or not verify_password(data.password, user.password):
         raise HTTPException(
@@ -52,9 +63,12 @@ def login(data: Login, db: Session = Depends(db)):
     }
 
 
-@router.post("/auth/refresh/")
+@router.post(
+    "/auth/refresh/",
+    responses={200: REFRESH_TOKEN_200_RESPONSE, 401: UNAUTHORIZED_401},
+)
 def refresh_token(data: TokenRefreshRequest):
-    """Endpoint to refresh an access token."""
+    """Get a new access token using the refresh token"""
     payload = decode_token(data.refresh_token, REFRESH_SECRET_KEY)
 
     username: str = payload.get("sub")
@@ -68,8 +82,8 @@ def refresh_token(data: TokenRefreshRequest):
     return {"access_token": new_access_token, "token_type": "bearer"}
 
 
-@router.get("/me/")
+@router.get("/me/", responses={403: FORBIDEN_403})
 def user_detail(db: Session = Depends(db), user=Depends(validate_token)) -> UserOut:
-    """Get user details"""
+    """Get username."""
 
     return {"username": user.username}
