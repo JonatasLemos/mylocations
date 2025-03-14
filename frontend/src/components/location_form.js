@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { fetchWithTokenRefresh } from '../api/utils/fetch';
+import { createLocation } from '../api/post_location';
 
 function CreateLocationForm() {
   const [latitude, setLatitude] = useState(0);
@@ -21,14 +21,7 @@ function CreateLocationForm() {
     };
 
     try {
-      const response = await fetchWithTokenRefresh(
-        'http://localhost:8000/my-locations/create/',
-        {
-          method: 'POST',
-          body: JSON.stringify(locationData),
-        }
-      );
-
+      await createLocation(locationData); // Use the createLocation function
       setMessage('Location created successfully!');
       // Reset form fields if needed
       setLatitude(0);

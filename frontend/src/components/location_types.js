@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getLocationTypes} from '../api/get_location_types_api';
+import { getLocationTypes} from '../api/list_apis';
 
 function LocationType() {
     const [locationTypes, setLocationTypes] = useState([]);
