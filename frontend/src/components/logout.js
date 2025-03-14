@@ -1,13 +1,13 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function Logout() {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const logout = () => {
-    sessionStorage.removeItem('access_token');
-    sessionStorage.removeItem('refresh_token');
-    navigate('/'); // Use navigate to redirect
+    sessionStorage.removeItem("access_token");
+    sessionStorage.removeItem("refresh_token");
+    navigate("/");
   };
 
   return (

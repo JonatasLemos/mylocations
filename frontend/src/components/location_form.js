@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { createLocation } from '../api/post_location';
-import UnauthenticatedMessage from './unauthenticated_message';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import React, { useState, useEffect } from "react";
+import { createLocation } from "../api/post_location";
+import UnauthenticatedMessage from "./unauthenticated_message";
+import { useNavigate } from "react-router-dom"; 
 
 function CreateLocationForm() {
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
   const [locationTypeId, setLocationTypeId] = useState(0);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [message, setMessage] = useState('');
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [message, setMessage] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const token = sessionStorage.getItem('access_token');
+    const token = sessionStorage.getItem("access_token");
     if (token) {
       setIsAuthenticated(true);
     }
@@ -36,21 +36,21 @@ function CreateLocationForm() {
     try {
       setError(null);
       await createLocation(locationData);
-      setMessage('Location created successfully!');
+      setMessage("Location created successfully!");
       setIsSuccess(true);
       setLatitude(0);
       setLongitude(0);
       setLocationTypeId(0);
-      setName('');
-      setDescription('');
-      setTimeout(() => { // Add timeout and navigation
-        navigate('/my-locations');
+      setName("");
+      setDescription("");
+      setTimeout(() => {
+        navigate("/my-locations");
       }, 2000);
     } catch (err) {
-      setError(err.message || 'An unknown error occurred.');
-      setMessage('Failed to create location. Please try again.');
+      setError(err.message || "An unknown error occurred.");
+      setMessage("Failed to create location. Please try again.");
       setIsSuccess(false);
-      console.error('Error creating location:', err);
+      console.error("Error creating location:", err);
     }
   };
 
@@ -109,12 +109,18 @@ function CreateLocationForm() {
           </button>
         </form>
         {message && isSuccess && (
-          <div className="container mt-4 alert alert-success text-center" role="alert">
+          <div
+            className="container mt-4 alert alert-success text-center"
+            role="alert"
+          >
             {message}
           </div>
         )}
         {message && !isSuccess && (
-          <div className="container mt-4 alert alert-danger text-center" role="alert">
+          <div
+            className="container mt-4 alert alert-danger text-center"
+            role="alert"
+          >
             {error ? `${error}.` : message}
           </div>
         )}

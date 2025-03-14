@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { getLocationTypes } from '../api/list_apis';
-import UnauthenticatedMessage from './unauthenticated_message';
+import React, { useState, useEffect } from "react";
+import { getLocationTypes } from "../api/list_apis";
+import UnauthenticatedMessage from "./unauthenticated_message";
 
 function LocationType() {
   const [locations, setLocations] = useState([]);
@@ -8,18 +8,17 @@ function LocationType() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const token = sessionStorage.getItem('access_token');
+    const token = sessionStorage.getItem("access_token");
     if (token) {
       setIsAuthenticated(true);
       getLocationTypes()
         .then((data) => setLocations(data.items))
         .catch((err) => {
           setError(err.message);
-          console.error('Error fetching location types:', err);
-          // Set a timeout to clear the error message
+          console.error("Error fetching location types:", err);
           setTimeout(() => {
             setError(null);
-          }, 3000); // Clear error after 3000 milliseconds (5 seconds)
+          }, 3000);
         });
     }
   }, []);

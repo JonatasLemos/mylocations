@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { registerUser } from '../api/login_api';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import React, { useState } from "react";
+import { registerUser } from "../api/login_api";
+import { useNavigate } from "react-router-dom";
 
 function RegistrationForm() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
   const [isSuccess, setSuccess] = useState(false);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -15,13 +15,13 @@ function RegistrationForm() {
     const { success, data } = await registerUser(username, password);
 
     if (success) {
-      setMessage('Registration successful!');
+      setMessage("Registration successful!");
       setSuccess(true);
-      setTimeout(() => { // Add timeout and navigation
-        navigate('/');
+      setTimeout(() => {
+        navigate("/");
       }, 2000);
     } else {
-      setMessage('Cannot register user!');
+      setMessage("Cannot register user!");
       setSuccess(false);
     }
   };
@@ -54,12 +54,18 @@ function RegistrationForm() {
           </button>
         </form>
         {message && isSuccess && (
-          <div className="container mt-4 alert alert-success text-center" role="alert">
+          <div
+            className="container mt-4 alert alert-success text-center"
+            role="alert"
+          >
             {message}
           </div>
         )}
         {message && !isSuccess && (
-          <div className="container mt-4 alert alert-danger text-center" role="alert">
+          <div
+            className="container mt-4 alert alert-danger text-center"
+            role="alert"
+          >
             {message}
           </div>
         )}
