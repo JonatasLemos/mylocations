@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { registerUser } from '../api/login_api';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 function RegistrationForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-  const [isSuccess, setSuccess] = useState(false); // Initial state should be false
+  const [isSuccess, setSuccess] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -15,6 +17,9 @@ function RegistrationForm() {
     if (success) {
       setMessage('Registration successful!');
       setSuccess(true);
+      setTimeout(() => { // Add timeout and navigation
+        navigate('/');
+      }, 2000);
     } else {
       setMessage('Cannot register user!');
       setSuccess(false);
