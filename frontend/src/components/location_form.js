@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createLocation } from '../api/post_location';
-import UnauthenticatedMessage from './unauthenticated_message'; 
+import UnauthenticatedMessage from './unauthenticated_message';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 function CreateLocationForm() {
   const [latitude, setLatitude] = useState(0);
@@ -10,6 +11,9 @@ function CreateLocationForm() {
   const [description, setDescription] = useState('');
   const [message, setMessage] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [error, setError] = useState(null);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
     const token = sessionStorage.getItem('access_token');
@@ -30,23 +34,28 @@ function CreateLocationForm() {
     };
 
     try {
+      setError(null);
       await createLocation(locationData);
       setMessage('Location created successfully!');
+      setIsSuccess(true);
       setLatitude(0);
       setLongitude(0);
       setLocationTypeId(0);
       setName('');
       setDescription('');
-    } catch (error) {
+      setTimeout(() => { // Add timeout and navigation
+        navigate('/my-locations');
+      }, 2000);
+    } catch (err) {
+      setError(err.message || 'An unknown error occurred.');
       setMessage('Failed to create location. Please try again.');
-      console.error('Error creating location:', error);
+      setIsSuccess(false);
+      console.error('Error creating location:', err);
     }
   };
 
   if (!isAuthenticated) {
-    return (
-      <UnauthenticatedMessage />
-    );
+    return <UnauthenticatedMessage />;
   }
 
   return (
@@ -58,7 +67,6 @@ function CreateLocationForm() {
             <input
               type="number"
               placeholder="Latitude"
-              value={latitude}
               onChange={(e) => setLatitude(e.target.value)}
               className="form-control"
             />
@@ -67,7 +75,6 @@ function CreateLocationForm() {
             <input
               type="number"
               placeholder="Longitude"
-              value={longitude}
               onChange={(e) => setLongitude(e.target.value)}
               className="form-control"
             />
@@ -76,7 +83,6 @@ function CreateLocationForm() {
             <input
               type="number"
               placeholder="Location Type ID"
-              value={locationTypeId}
               onChange={(e) => setLocationTypeId(e.target.value)}
               className="form-control"
             />
@@ -102,7 +108,16 @@ function CreateLocationForm() {
             Create
           </button>
         </form>
-        {message && <p className="mt-2 text-center">{message}</p>}
+        {message && isSuccess && (
+          <div className="container mt-4 alert alert-success text-center" role="alert">
+            {message}
+          </div>
+        )}
+        {message && !isSuccess && (
+          <div className="container mt-4 alert alert-danger text-center" role="alert">
+            {error ? `${error}.` : message}
+          </div>
+        )}
       </div>
     </div>
   );

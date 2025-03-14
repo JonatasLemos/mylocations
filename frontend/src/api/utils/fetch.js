@@ -22,16 +22,20 @@ export const fetchWithTokenRefresh = async (url, options = {}) => {
     if (response.ok) {
       return response.json();
     } else if (response.status === 401 && refreshToken) {
-      console.log("hey")
       const newToken = await refreshAccessToken(refreshToken);
-      console.log("billl")
       if (newToken) {
         sessionStorage.setItem('access_token', newToken);
         return fetchWithAuth(newToken);
       }
     }
 
-    throw new Error('Failed to fetch data');
+    const errorDetails = {
+      status: response.status,
+      statusText: response.statusText,
+      url: response.url,
+      // You can add more details from the response object here
+    };
+    throw new Error(`Something went wrong. status: ${JSON.stringify(errorDetails.status)} msg: ${JSON.stringify(errorDetails.statusText)}`);
   };
 
   return fetchWithAuth(token);
