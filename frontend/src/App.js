@@ -20,7 +20,7 @@ function App() {
               <Link to="/location" className="nav-link">Available locations</Link>
             </li>
           </ul>
-          <div  className="mr-auto">
+          <div  className="ms-auto">
             <Logout/>
           </div> 
         </nav>

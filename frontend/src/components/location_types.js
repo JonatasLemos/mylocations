@@ -4,9 +4,12 @@ import { getLocationTypes} from '../api/get_location_types_api';
 function LocationType() {
     const [locationTypes, setLocationTypes] = useState([]);
     const [error, setError] = useState(null);
+    const [isCollapsed, setIsCollapsed] = useState(false);
     
 
     const handleFetchLocationTypes = async () => {
+        setIsCollapsed(!isCollapsed); // Toggle collapse
+        if (isCollapsed || locationTypes.length > 0) return; // If already collapsed, don't fetch again
         try {
             setError(null);
             const data = await getLocationTypes();
@@ -17,18 +20,43 @@ function LocationType() {
     };
 
     return (
-        <div className='container mt-4'>
-            <button onClick={handleFetchLocationTypes} className="btn btn-primary mb-3">Load Location Types</button>
+    <div className="container mt-4">
+      <div id="accordion">
+        <div className="card">
+          <div className="card-header" id="headingOne">
+            <h5 className="mb-0">
+              <button
+                className="btn btn-light"
+                onClick={handleFetchLocationTypes}
+                aria-expanded={isCollapsed}
+                aria-controls="collapseOne"
+              >
+                Locations
+              </button>
+            </h5>
+          </div>
 
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-
-            <ul className='list-group'>
+          <div
+            id="collapseOne"
+            className={`collapse ${isCollapsed ? 'show' : ''}`}
+            aria-labelledby="headingOne"
+            data-parent="#accordion"
+          >
+            <div className="card-body">
+              {error && <div className="alert alert-danger">{error}</div>}
+              <ul className="list-group">
                 {locationTypes.map((type) => (
-                    <li key={type.id} className='list-group-item'>{type.name}</li>
+                  <li key={type.id} className="list-group-item">
+                    {type.name}
+                  </li>
                 ))}
-            </ul>
+              </ul>
+            </div>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
 
 export default LocationType;
