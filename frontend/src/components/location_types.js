@@ -47,7 +47,7 @@ function LocationType() {
               <ul className="list-group">
                 {locationTypes.map((type) => (
                   <li key={type.id} className="list-group-item">
-                    {type.name}
+                    {type.id} - {type.name}
                   </li>
                 ))}
               </ul>

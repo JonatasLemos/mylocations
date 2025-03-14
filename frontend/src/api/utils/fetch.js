@@ -1,4 +1,4 @@
-import { refreshAccessToken } from './refresh_token'; // Import refreshAccessToken
+import { refreshAccessToken } from './refresh_token';
 
 export const fetchWithTokenRefresh = async (url, options = {}) => {
   let token = sessionStorage.getItem('access_token');
@@ -21,7 +21,9 @@ export const fetchWithTokenRefresh = async (url, options = {}) => {
     if (response.ok) {
       return response.json();
     } else if (response.status === 401 && refreshToken) {
+      console.log("hey")
       const newToken = await refreshAccessToken(refreshToken);
+      console.log("billl")
       if (newToken) {
         sessionStorage.setItem('access_token', newToken);
         return fetchWithAuth(newToken);
