@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { getUserLocations } from "../api/list_apis";
-import UnauthenticatedMessage from "./unauthenticated_message";
+import { getUserLocations } from "../api/fetch_locations";
+import UnauthenticatedMessage from "./unauthenticated_alert";
 
 const LocationsTable = () => {
   const [locations, setLocations] = useState([]);

@@ -1,4 +1,4 @@
-import { fetchWithTokenRefresh } from "./utils/fetch";
+import { fetchWithTokenRefresh } from "./utils/request";
 
 export const getLocationTypes = async (page = 1, size = 10) => {
   const url = `http://localhost:8000/location-types/list/?page=${page}&size=${size}`;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { getLocationTypes } from "../api/list_apis";
-import UnauthenticatedMessage from "./unauthenticated_message";
+import { getLocationTypes } from "../api/fetch_locations";
+import UnauthenticatedMessage from "./unauthenticated_alert";
 
 function LocationType() {
   const [locations, setLocations] = useState([]);
@@ -29,7 +29,7 @@ function LocationType() {
 
   return (
     <div className="container mt-4">
-      <h2>User Locations</h2>
+      <h3>Location Types</h3>
 
       {error && <div className="alert alert-danger">{error}</div>}
 

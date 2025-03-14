@@ -1,35 +1,47 @@
 import React, { useState } from "react";
-import { registerUser } from "../api/login_api";
+import { loginUser, fetchUsername } from "../api/login";
 import { useNavigate } from "react-router-dom";
 
-function RegistrationForm() {
+function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [isSuccess, setSuccess] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const { success, data } = await registerUser(username, password);
+    const { success, data } = await loginUser(username, password);
 
     if (success) {
-      setMessage("Registration successful!");
-      setSuccess(true);
-      setTimeout(() => {
-        navigate("/");
-      }, 2000);
+      sessionStorage.setItem("access_token", data.access_token);
+      sessionStorage.setItem("refresh_token", data.refresh_token);
+
+      const usernameResponse = await fetchUsername();
+      if (usernameResponse.success) {
+        setMessage(`Welcome ${usernameResponse.data.username}`);
+        setIsSuccess(true);
+        setTimeout(() => {
+          navigate("/my-locations");
+        }, 2000);
+      } else {
+        setMessage(usernameResponse.data.detail || "Failed to fetch username");
+        setIsSuccess(false);
+      }
     } else {
-      setMessage("Cannot register user!");
-      setSuccess(false);
+      setMessage(data.detail || "Login failed");
+      setIsSuccess(false);
     }
+
+    setUsername("");
+    setPassword("");
   };
 
   return (
     <div className="container mt-4 d-flex justify-content-center">
       <div className="col-md-6">
-        <h2>Register</h2>
+        <h2>Login</h2>
         <form onSubmit={handleSubmit} className="form-group">
           <div className="mb-3">
             <input
@@ -50,7 +62,7 @@ function RegistrationForm() {
             />
           </div>
           <button type="submit" className="btn btn-primary w-100">
-            Register
+            Login
           </button>
         </form>
         {message && isSuccess && (
@@ -74,4 +86,4 @@ function RegistrationForm() {
   );
 }
 
-export default RegistrationForm;
+export default LoginForm;

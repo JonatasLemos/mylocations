@@ -1,4 +1,4 @@
-import { fetchWithTokenRefresh } from "./utils/fetch";
+import { fetchWithTokenRefresh } from "./utils/request";
 
 export const createLocation = async (locationData) => {
   try {

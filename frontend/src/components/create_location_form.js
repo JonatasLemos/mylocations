@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { createLocation } from "../api/post_location";
-import UnauthenticatedMessage from "./unauthenticated_message";
+import { createLocation } from "../api/create_location";
+import UnauthenticatedMessage from "./unauthenticated_alert";
 import { useNavigate } from "react-router-dom"; 
 
 function CreateLocationForm() {
