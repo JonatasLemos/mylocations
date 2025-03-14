@@ -27,6 +27,8 @@ export const fetchWithTokenRefresh = async (url, options = {}) => {
         sessionStorage.setItem("access_token", newToken);
         return fetchWithAuth(newToken);
       }
+    } else if (response.status === 404) {
+      return response;
     }
 
     const errorDetails = {

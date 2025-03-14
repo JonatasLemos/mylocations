@@ -6,14 +6,23 @@ const LocationsTable = () => {
   const [locations, setLocations] = useState([]);
   const [expanded, setExpanded] = useState({});
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [error, setError] = useState(null); // Add error state
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const token = sessionStorage.getItem("access_token");
     if (token) {
       setIsAuthenticated(true);
       getUserLocations()
-        .then((data) => setLocations(data.items))
+        .then((response) => {
+          if (response.status === 404) {
+            setError("You don't have locations yet.");
+            setTimeout(() => {
+              setError(null);
+            }, 3000);
+          } else {
+            setLocations(response.items);
+          }
+        })
         .catch((err) => {
           setError(err.message);
           console.error("Error fetching user locations:", err);
