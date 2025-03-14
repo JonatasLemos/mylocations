@@ -29,7 +29,7 @@ class CreateLocation:
 
     def get_or_create_location(self):
         """Check if a Location with the same coordinates and location type
-        exists, if not create a new one"""
+        exists, if not add a new one"""
         location = (
             self.db.query(Location)
             .filter(

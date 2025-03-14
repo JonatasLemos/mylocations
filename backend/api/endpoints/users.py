@@ -18,7 +18,13 @@ from core.database import get_db as db
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from models.user import User
-from schemas.user_schema import Login, TokenRefreshRequest, UserOut, UserRegistration
+from schemas.user_schema import (
+    Login,
+    RegistrationOut,
+    TokenRefreshRequest,
+    UserOut,
+    UserRegistration,
+)
 from sqlalchemy.orm import Session
 
 
@@ -28,14 +34,19 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.post("/register/", status_code=status.HTTP_201_CREATED)
-def register_user(data: UserRegistration, db: Session = Depends(db)):
+def register_user(data: UserRegistration, db: Session = Depends(db)) -> RegistrationOut:
     """Register a new user."""
     if db.query(User).filter(User.username == data.username).first():
         raise HTTPException(status_code=400, detail="Username already taken")
     new_user = User(username=data.username, password=hash_password(data.password))
     db.add(new_user)
     db.commit()
-    return {"message": "User registered successfully"}
+    response = RegistrationOut(
+        user_id=new_user.id,
+        username=new_user.username,
+        created_at=new_user.created_at,
+    )
+    return response
 
 
 @router.post(

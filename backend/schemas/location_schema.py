@@ -33,6 +33,8 @@ class LocationTypeOut(BaseModel):
 
 
 class PaginatedResponse(BaseModel, Generic[T]):
+    """Genereic paginate response base model"""
+
     items: list[T]
     total: int
     page: int
@@ -41,6 +43,8 @@ class PaginatedResponse(BaseModel, Generic[T]):
 
 
 class LocationCreateOut(BaseModel):
+    """Data schema for location creation response"""
+
     id: int
     name: str
     location_id: int
@@ -108,6 +112,8 @@ class LocationCreate(BaseModel):
 
 
 class LocationUpdate(BaseModel):
+    """Data schema to update location input"""
+
     description: Optional[str] = None
     name: Optional[str] = None
 
