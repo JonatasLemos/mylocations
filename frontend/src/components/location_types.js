@@ -31,7 +31,7 @@ function LocationType() {
                 aria-expanded={isCollapsed}
                 aria-controls="collapseOne"
               >
-                Locations
+                Location Types
               </button>
             </h5>
           </div>

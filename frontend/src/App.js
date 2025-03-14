@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import RegistrationForm from './components/register';
 import LocationType from './components/location_types';
+import UserLocation from './components/user_locations';
 import LoginForm from './components/login';
 import Logout from './components/logout';
 import CreateLocationForm from './components/location_form';
@@ -23,7 +24,12 @@ function App() {
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/location" className="nav-link">Available locations</Link>
+              <Link to="/my-locations" className="nav-link">
+                See my locations
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/location" className="nav-link">Location Types</Link>
             </li>
           </ul>
           <div  className="ms-auto">
@@ -34,6 +40,7 @@ function App() {
           <Route path="/registration" element={<RegistrationForm />} />
           <Route path="/" element={<LoginForm />} />
           <Route path="/location" element={<LocationType />} />
+          <Route path="/my-locations" element={<UserLocation />} />
           <Route path="/add-location" element={<CreateLocationForm />} />
         </Routes>
       </div>
