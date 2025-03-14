@@ -1,60 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getLocationTypes} from '../api/list_apis';
+import UnauthenticatedMessage from './unauthenticated_message'; 
 
 function LocationType() {
-    const [locationTypes, setLocationTypes] = useState([]);
-    const [error, setError] = useState(null);
-    const [isCollapsed, setIsCollapsed] = useState(false);
-    
+  const [locations, setLocations] = useState([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [error, setError] = useState(null);
 
-    const handleFetchLocationTypes = async () => {
-        setIsCollapsed(!isCollapsed); // Toggle collapse
-        if (isCollapsed || locationTypes.length > 0) return; // If already collapsed, don't fetch again
-        try {
-            setError(null);
-            const data = await getLocationTypes();
-            setLocationTypes(data.items || []);
-        } catch (err) {
-            setError(err.message);
-        }
-    };
+  useEffect(() => {
+    const token = sessionStorage.getItem('access_token');
+    if (token) {
+      setIsAuthenticated(true);
+      getLocationTypes()
+        .then((data) => setLocations(data.items))
+        .catch((err) => setError(err.message)); // Handle error
+    }
+  }, []);
 
+  if (!isAuthenticated) {
     return (
-    <div className="container mt-4">
-      <div id="accordion">
-        <div className="card">
-          <div className="card-header" id="headingOne">
-            <h5 className="mb-0">
-              <button
-                className="btn btn-light"
-                onClick={handleFetchLocationTypes}
-                aria-expanded={isCollapsed}
-                aria-controls="collapseOne"
-              >
-                Location Types
-              </button>
-            </h5>
-          </div>
+      <UnauthenticatedMessage />
+    );
+  }
 
-          <div
-            id="collapseOne"
-            className={`collapse ${isCollapsed ? 'show' : ''}`}
-            aria-labelledby="headingOne"
-            data-parent="#accordion"
-          >
-            <div className="card-body">
-              {error && <div className="alert alert-danger">{error}</div>}
-              <ul className="list-group">
-                {locationTypes.map((type) => (
-                  <li key={type.id} className="list-group-item">
-                    {type.id} - {type.name}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
+  return (
+    <div className="container mt-4">
+      <h2>User Locations</h2>
+
+      {error && <div className="alert alert-danger">{error}</div>}
+
+      {locations.length > 0 && (
+        <ul className="list-group">
+          {locations.map((location) => (
+            <li key={location.id} className="list-group-item">
+              {location.name}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

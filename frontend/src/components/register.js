@@ -42,7 +42,7 @@ function RegistrationForm() {
               className="form-control"
             />
           </div>
-          <button type="submit" className="btn btn-primary">Register</button>
+          <button type="submit" className="btn btn-primary w-100">Register</button>
         </form>
         {message && <p className="mt-2">{message}</p>}
       </div>

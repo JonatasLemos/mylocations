@@ -1,21 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { getUserLocations } from '../api/list_apis'; // Adjust based on your API file
+import UnauthenticatedMessage from './unauthenticated_message'; 
 
 const LocationsTable = () => {
   const [locations, setLocations] = useState([]);
   const [expanded, setExpanded] = useState({});
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    getUserLocations().then((data) => setLocations(data.items));
+    const token = sessionStorage.getItem('access_token');
+    if (token) {
+      setIsAuthenticated(true);
+      getUserLocations().then((data) => setLocations(data.items));
+    }
   }, []);
 
   const toggleDetails = (id) => {
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  if (!isAuthenticated) {
+    return (
+      <UnauthenticatedMessage />
+    );
+  }
+
   return (
     <div className="container mt-4">
-      <h2 className="mb-3">Available Locations</h2>
+      <h3 className="mb-3">Available Locations</h3>
       <table className="table table-striped table-bordered">
         <thead className="thead-dark">
           <tr>

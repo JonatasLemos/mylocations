@@ -5,7 +5,8 @@ export const fetchWithTokenRefresh = async (url, options = {}) => {
   const refreshToken = sessionStorage.getItem('refresh_token');
 
   if (!token) {
-    throw new Error('Not authenticated');
+    console.warn('User is not authenticated');
+    return { error: 'User is not authenticated' };
   }
 
   const fetchWithAuth = async (tokenToUse) => {

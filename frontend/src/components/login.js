@@ -21,7 +21,7 @@ function LoginForm() {
       if(usernameResponse.success){
         alert(`Login successful! Welcome ${usernameResponse.data.username}`);
         setMessage(`Welcome ${usernameResponse.data.username}`);
-        navigate('/location');
+        navigate('/my-locations');
       } else {
         alert(usernameResponse.data.detail || "Failed to fetch username");
         setMessage(usernameResponse.data.detail || "Failed to fetch username");
@@ -58,7 +58,7 @@ function LoginForm() {
               className="form-control"
             />
           </div>
-          <button type="submit" className="btn btn-primary">Login</button>
+          <button type="submit" className="btn btn-primary w-100">Login</button>
         </form>
         {message && <p className="mt-2">{message}</p>}
       </div>
